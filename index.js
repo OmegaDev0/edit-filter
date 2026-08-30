@@ -408,19 +408,24 @@ module.exports = {
                             break;
                         }
 
+                        case 'deny': {
+                            res.status(403).send(action.message || `편집필터 ${filter.id}에 의해 불허됨`);
+                            return;
+                        }
+
                         case 'block': {
                             if(ctx.uuid) {
                                 const durationSec = parseDuration(action.duration);
                                 await addACLGroupItem({
                                     createdUserUuid: ctx.uuid,
-                                    groupName: action.groupName || '차단',
+                                    groupName: action.groupName || '차단된 사용자',
                                     uuid: ctx.uuid,
                                     duration: durationSec * 1000,
                                     note: action.note || `편집 필터 ${filter.id}`,
                                     hideLog: Boolean(action.hidelog)
                                 });
                             }
-                            res.status(403).send(`편집필터 ${filter.id}에 의해 불허됨`);
+                            res.status(403).send(action.message || `편집필터 ${filter.id}에 의해 차단됨`);
                             return;
                         }
 
